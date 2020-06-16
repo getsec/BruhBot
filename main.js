@@ -1,15 +1,20 @@
 'use strict';
-require('dotenv').config(); 
+
 const Discord = require('discord.js');
 const client = new Discord.Client();
 var express = require("express");
 var app = express();
 var inquirer = require('inquirer');
 const ping = require('./commands/ping')
-const prefix = process.env.PREFIX
-const token = process.env.CLIENT_TOKEN
+
+require('dotenv').config(); 
+
+const prefix = process.env.PREFIX;
+const token  = process.env.CLIENT_TOKEN;
 
 
+
+// When the application starts, this is required...
 client.on('ready', () => {
     console.log('I am ready!');
 
@@ -65,6 +70,5 @@ client.on('voiceStateUpdate', async message => {
 
     }
 });
-
 
 client.login(token);
