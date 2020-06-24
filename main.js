@@ -82,7 +82,25 @@ client.on('message', async message =>{
             { name: 'Play some funny sounds', value: `Make sure you are joined to a channel, and user the ! prefix and a name of a sound. The current set of sounds are: ${voicecommands}` },
         );
         message.channel.send(helpEmbedMessage);
-    } 
+    } else if (command === "lofihiphopbeatstostudyrelaxchillto"){
+        if (message.channel.type !== 'text') return;
+    
+            const voiceChannel = message.member.voice.channel;
+    
+            if (!voiceChannel) {
+                return message.reply('please join a voice channel first!');
+            }
+    
+            voiceChannel.join().then(connection => {
+                const stream = ytdl("https://www.youtube.com/watch?v=-FlxM_0S2lA&t=3s", { 
+                    filter: 'audioonly',
+                }
+                );
+                const dispatcher = connection.play(stream, {volume: globalBotVolume});
+    
+                dispatcher.on('end', () => voiceChannel.leave());
+            });
+    }
     else if (command == "mix"){
             if (message.channel.type !== 'text') return;
     
