@@ -4,22 +4,17 @@ const chalk = require('chalk');
 const Discord = require('discord.js');
 const fs = require('fs');
 const client = new Discord.Client();
-const prefix = process.env.PREFIX;
-const token  = process.env.CLIENT_TOKEN;
+const prefix = "!";
+const token  = "NzIxNDUxMjAwMTI1NDY4ODEz.XvJ8hg.6ZqehpVHHctav72w7q3kFF3TlTA";
 const globalBotVolume = 0.4
 const soundFiles = fs.readdirSync('./assets').filter(file => file.endsWith('.mp3'));
 const voicecommands = []
 
+console.log(token)
 soundFiles.forEach(i => {
     voicecommands.push(i.replace('.mp3',''))
 });
 
-function logger (msg) {
-    fs.appendFile('log.txt', '\n' + msg, function (err) {
-        if (err) throw err;
-        console.log('Saved!');
-      });
-}
 
 
 const playSound = async (file, connection, dispatcher) => {
@@ -43,7 +38,8 @@ const playSound = async (file, connection, dispatcher) => {
 client.on("ready", function(){
     let tag = client.user.tag
     let clientSize = client.user.size
-    console.log(`${chalk.greenBright('We have launched succesfully')}.`);
+    let id = client.user.id
+    console.log(`${chalk.greenBright('We have launched succesfully')} with ID ${id}.`);
 	console.log(`Logged in as: ${chalk.yellow(tag)}!`);
 	
   	client.user.setActivity("your gf's heart 🤡");
@@ -61,6 +57,7 @@ client.on('message', async message =>{
 
 	const args = message.content.slice(prefix.length).split(/ +/);
     const command = args.shift().toLowerCase();
+    args.
     // this will remove the bot from a voice channel if it gets annoying.
     if (command == "kill"){
         message.member.voice.channel.leave()
@@ -95,41 +92,19 @@ client.on('message', async message =>{
     }
 });
 
+
 client.on('voiceStateUpdate', async message => {
     
-    if (message.id === 721451200125468813) {
-        console.log(message.id)
-        return
-    } else {
-        if (message.member.voice.channel) {
+    if (message.member.voice.channel) {
+
     
-        let isDeaf = message.selfDeaf;
-        let isMute = message.selfMute;
-        let srvMute = message.serverMute;
-        let srvDeaf  = message.serverDeaf;
-
-
-        console.log(`am i deaf: ${isDeaf}`)
-        console.log(`am i mute: ${isMute}`)
-        console.log(`srv deaf: ${srvDeaf}`)
-        console.log(`srv mute: ${srvMute}`)
-       
-        if (isDeaf === true){
-            console.log("Deafened...")
-        } else if (isMute === true) {
-            console.log("Muted...")
-        } else {
-            const file = 'assets/yo.mp3';
-            const connection = await message.member.voice.channel.join();
-            const dispatcher = connection.play(file, { volume: globalBotVolume });
-            
-            playSound(file, connection, dispatcher)
-        }
-
+        const file = 'assets/yo.mp3';
+        const connection = await message.member.voice.channel.join();
+        const dispatcher = connection.play(file, { volume: globalBotVolume });
         
-    
+        playSound(file, connection, dispatcher)
     }
-}
+
 });
 
 client.login(token);
