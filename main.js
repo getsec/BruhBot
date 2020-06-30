@@ -17,12 +17,14 @@ const mixes = [
     "https://youtu.be/GdzrrWA8e7A",
     "https://youtu.be/AvhplYM46Fc"
 ];
+
 console.log(token);
 soundFiles.forEach(i => {
     voiceCommands.push(i.replace('.mp3', ''));
 });
-
+voiceCommands.push('lofi')
 console.log(voiceCommands)
+
 
 
 const playSound = async(file, connection, dispatcher) => {
@@ -69,6 +71,7 @@ client.on('message', async message => {
     if (command === "kill") {
         message.member.voice.channel.leave();
     }
+    // Print help menu
     if (command === 'help') {
         const helpEmbedMessage = new Discord.MessageEmbed()
             .setColor('#0099ff')
@@ -79,35 +82,35 @@ client.on('message', async message => {
         .addFields({ name: 'Main Function', value: 'Every time you join a channel, you will get greeted with a CJ "yoooo"' }, { name: 'Play some funny sounds', value: `Make sure you are joined to a channel, and user the ! prefix and a name of a sound. The current set of sounds are: ${voiceCommands}` }, );
         message.channel.send(helpEmbedMessage);
     }
-    if (command === "lofihiphopbeatstostudyrelaxchillto") {
+    // Plays lofi
+    if (command === "lofi") {
         if (message.channel.type !== 'text') return;
 
-        const voiceChannel = message.member.voice.channel;
-
-        if (!voiceChannel) {
+        // If user isn't in a voice channel.
+        if (!message.member.voice.channel) {
             return message.reply('please join a voice channel first!');
         }
 
+        // Join and play lofi mix
         voiceChannel.join().then(connection => {
             const stream = ytdl("https://www.youtube.com/watch?v=-FlxM_0S2lA&t=3s", {
                 filter: 'audioonly',
             });
-            const dispatcher = connection.play(stream, { volume: globalBotVolume });
-
+            const dispatcher = connection.play(stream, { volume: globalBotVolume })
             dispatcher.on('end', () => voiceChannel.leave());
         });
     }
+
+    // Plays from an asortment of mixes
     if (command == "mix") {
         if (message.channel.type !== 'text') return;
-
-        const voiceChannel = message.member.voice.channel;
-
-        if (!voiceChannel) {
+        if (!message.member.voice.channel) {
             return message.reply('please join a voice channel first!');
         }
 
         voiceChannel.join().then(connection => {
             const randomMix = mixes[Math.floor(Math.random() * mixes.length)];
+            // play a random mix from my list
             const stream = ytdl(randomMix, {
                 filter: 'audioonly',
             });
@@ -139,10 +142,10 @@ client.on('message', async message => {
 
 
 client.on('voiceStateUpdate', async message => {
-
-    if (message.member.voice.channel) {
-
-
+    
+    if (message.member.user.id === globalBotId) {
+        return;
+    } else if (message.member.voice.channel) {
         const file = 'assets/yo.mp3';
         const connection = await message.member.voice.channel.join();
         const dispatcher = connection.play(file, { volume: globalBotVolume });
