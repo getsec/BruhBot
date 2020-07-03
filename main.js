@@ -1,5 +1,6 @@
 require('dotenv').config();
 let chalk = require('chalk');
+// let playSound =  require('./playsound');
 const Discord = require('discord.js');
 const fs = require('fs');
 const client = new Discord.Client();
@@ -7,22 +8,25 @@ const prefix = process.env.PREFIX;
 const token = process.env.CLIENT_TOKEN;
 const version = '1.1';
 const globalBotVolume = 0.4;
-const soundFiles = fs.readdirSync('./assets').filter(file => file.endsWith('.mp3'));
+
 const voiceCommands = [];
 const ytdl = require('ytdl-core');
-const mixes = [
-    "https://www.youtube.com/watch?v=lTRiuFIWV54",
-    "https://www.youtube.com/watch?v=wAPCSnAhhC8",
-    "https://www.youtube.com/watch?v=xjadNS2HBpM",
-    "https://youtu.be/GdzrrWA8e7A",
-    "https://youtu.be/AvhplYM46Fc"
-];
-console.log(token);
+
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const soundFiles = fs.readdirSync('./assets').filter(file => file.endsWith('.mp3'));
+client.commands = new Discord.Collection();
+
+// Create a list of commands from the commands directory
+for (const file of commandFiles) {
+	const command = require(`./commands/${file}`);
+	// set a new item in the Collection
+	// with the key as the command name and the value as the exported module
+	client.commands.set(command.name, command);
+}
+
 soundFiles.forEach(i => {
     voiceCommands.push(i.replace('.mp3', ''));
 });
-
-console.log(voiceCommands)
 
 
 const playSound = async(file, connection, dispatcher) => {
@@ -66,108 +70,65 @@ client.on('message', async message => {
     const command = args.shift().toLowerCase();
 
     // this will remove the bot from a voice channel if it gets annoying.
+    if (command === "ping"){
+        client.commands.get('ping').execute(message, args);
+    }
     if (command === "kill") {
-        message.member.voice.channel.leave();
+        let currentVoiceChannel = message.member.voice.channel;
+        client.commands.get('kill').execute(currentVoiceChannel);
     }
-    if (command === 'help') {
-        const helpEmbedMessage = new Discord.MessageEmbed()
-            .setColor('#0099ff')
-            .setTitle(`Welcome to the help menu! ver: ${version}`)
-            .setURL('https://youtu.be/dQw4w9WgXcQ')
-            .setDescription(`Whats up, buttercup!`)
-
-        .addFields({ name: 'Main Function', value: 'Every time you join a channel, you will get greeted with a CJ "yoooo"' }, { name: 'Play some funny sounds', value: `Make sure you are joined to a channel, and user the ! prefix and a name of a sound. The current set of sounds are: ${voiceCommands}` }, );
-        message.channel.send(helpEmbedMessage);
-    }
-    if (command === "lofihiphopbeatstostudyrelaxchillto") {
-        if (message.channel.type !== 'text') return;
-
-        const voiceChannel = message.member.voice.channel;
-
-        if (!voiceChannel) {
-            return message.reply('please join a voice channel first!');
-        }
-
-        voiceChannel.join().then(connection => {
-            const stream = ytdl("https://www.youtube.com/watch?v=-FlxM_0S2lA&t=3s", {
-                filter: 'audioonly',
-            });
-            const dispatcher = connection.play(stream, { volume: globalBotVolume });
-
-            dispatcher.on('end', () => voiceChannel.leave());
-        });
+    if (command === "lofi") {
+        let channelType = message.channel.type;
+        let currentVoiceChannel = message.member.voice.channel;
+        client.commands.get('lofi').execute(channelType, currentVoiceChannel, globalBotVolume);
     }
     if (command == "mix") {
-        if (message.channel.type !== 'text') return;
-
-        const voiceChannel = message.member.voice.channel;
-
-        if (!voiceChannel) {
-            return message.reply('please join a voice channel first!');
-        }
-
-        voiceChannel.join().then(connection => {
-            const randomMix = mixes[Math.floor(Math.random() * mixes.length)];
-            const stream = ytdl(randomMix, {
-                filter: 'audioonly',
-            });
-            const dispatcher = connection.play(stream, { volume: globalBotVolume });
-
-            dispatcher.on('end', () => voiceChannel.leave());
-        });
-
+        let channelType = message.channel.type;
+        let currentVoiceChannel = message.member.voice.channel;
+        client.commands.get('lofi').execute(channelType, currentVoiceChannel, globalBotVolume);
     }
     // Check to see if the command matches one of the sound files
     if (voiceCommands.includes(command)) {
-        try {
-            const connection = await message.member.voice.channel.join();
-
-            soundFiles.forEach(i => {
-                let soundFileCommand = i.replace('.mp3', '');
-                let soundFilePath = `./assets/${i}`;
-                if (command === soundFileCommand) {
-                    const dispatcher = connection.play(soundFilePath, { volume: globalBotVolume });
-                    playSound(soundFilePath, connection, dispatcher);
-                }
-            });
-        } catch (e) {
-            message.channel.send("Either you aren't in a channel. Or this bot fucking died. ☠️");
-            console.log(e);
+        // If the user isn't in a voice channel
+        if (message.member.voice.channel == null){
+            message.channel.send("Ayy, you arent in a channel. It's also a possibility that nathan fucked this bot up so bad this feature doesnt work anymore. Good luck... ☠️");
+        } else {
+            try {
+                const connection = await message.member.voice.channel.join();
+    
+                soundFiles.forEach(i => {
+                    let soundFileCommand = i.replace('.mp3', '');
+                    let soundFilePath = `./assets/${i}`;
+                    if (command === soundFileCommand) {
+                        const dispatcher = connection.play(soundFilePath, { volume: globalBotVolume });
+                        playSound(soundFilePath, connection, dispatcher);
+                    }
+                });
+            } catch (e) {
+                message.channel.send(e);
+                console.log(e);
+            }
         }
+        
+    } else {
+        message.channel.send("Uh oh, we had a fucko boingo - A weal fucky wucky. The cowde monkeys are working vewy hawrd. 🙈")
     }
 });
 
 
-// client.on('voiceStateUpdate', async message => {
-//     console.log(newState)
-// if (message.member.voice.channel) {
-
-
-//     const file = 'assets/yo.mp3';
-//     const connection = await message.member.voice.channel.join();
-//     const dispatcher = connection.play(file, { volume: globalBotVolume });
-
-//     playSound(file, connection, dispatcher);
-// }
-
-// });
-
 client.on('voiceStateUpdate', async(oldMember, newMember) => {
     let newUserChannel = newMember.channelID;
     let oldUserChannel = oldMember.channelID;
-    // console.log(oldUserChannel, newUserChannel)
-    // console.log(oldMember.channelID, newMember.channelID)
-    console.log(oldUserChannel, newUserChannel)
+    console.log(`channels (old|new):  ${oldUserChannel} | ${newUserChannel}`)
 
     // If the oldChannel that the user was in is null, and the new channel exists. Execute sound.
-    if (oldUserChannel === null && newUserChannel !== undefined) {
-
-
+    if (newUserChannel !== undefined && (oldUserChannel === undefined || oldUserChannel === null)) {
         const file = 'assets/yo.mp3';
         const connection = await newMember.channel.join();
         const dispatcher = connection.play(file, { volume: globalBotVolume });
         playSound(file, connection, dispatcher);
-    }
-})
+    } 
+
+});
 
 client.login(token);
