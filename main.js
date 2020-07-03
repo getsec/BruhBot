@@ -73,6 +73,9 @@ client.on('message', async message => {
     if (command === "ping"){
         client.commands.get('ping').execute(message, args);
     }
+    if (command === "help") {
+        client.commands.get('help').execute(message);
+    }
     if (command === "kill") {
         let currentVoiceChannel = message.member.voice.channel;
         client.commands.get('kill').execute(currentVoiceChannel);
@@ -85,7 +88,10 @@ client.on('message', async message => {
     if (command == "mix") {
         let channelType = message.channel.type;
         let currentVoiceChannel = message.member.voice.channel;
-        client.commands.get('lofi').execute(channelType, currentVoiceChannel, globalBotVolume);
+        client.commands.get('mix').execute(channelType, currentVoiceChannel, globalBotVolume);
+    }
+    if (command === "sounds") {
+        client.commands.get('sounds').execute(message, voiceCommands);
     }
     // Check to see if the command matches one of the sound files
     if (voiceCommands.includes(command)) {
@@ -110,8 +116,6 @@ client.on('message', async message => {
             }
         }
         
-    } else {
-        message.channel.send("Uh oh, we had a fucko boingo - A weal fucky wucky. The cowde monkeys are working vewy hawrd. 🙈")
     }
 });
 
