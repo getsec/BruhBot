@@ -138,18 +138,36 @@ client.on('message', async message => {
 });
 
 
-client.on('voiceStateUpdate', async message => {
+// client.on('voiceStateUpdate', async message => {
+//     console.log(newState)
+// if (message.member.voice.channel) {
 
-    if (message.member.voice.channel) {
+
+//     const file = 'assets/yo.mp3';
+//     const connection = await message.member.voice.channel.join();
+//     const dispatcher = connection.play(file, { volume: globalBotVolume });
+
+//     playSound(file, connection, dispatcher);
+// }
+
+// });
+
+client.on('voiceStateUpdate', async(oldMember, newMember) => {
+    let newUserChannel = newMember.channelID;
+    let oldUserChannel = oldMember.channelID;
+    // console.log(oldUserChannel, newUserChannel)
+    // console.log(oldMember.channelID, newMember.channelID)
+    console.log(oldUserChannel, newUserChannel)
+
+    // If the oldChannel that the user was in is null, and the new channel exists. Execute sound.
+    if (oldUserChannel === null && newUserChannel !== undefined) {
 
 
         const file = 'assets/yo.mp3';
-        const connection = await message.member.voice.channel.join();
+        const connection = await newMember.channel.join();
         const dispatcher = connection.play(file, { volume: globalBotVolume });
-
         playSound(file, connection, dispatcher);
     }
-
-});
+})
 
 client.login(token);
