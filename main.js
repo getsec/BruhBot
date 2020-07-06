@@ -18,10 +18,10 @@ client.commands = new Discord.Collection();
 
 // Create a list of commands from the commands directory
 for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
-	// set a new item in the Collection
-	// with the key as the command name and the value as the exported module
-	client.commands.set(command.name, command);
+    const command = require(`./commands/${file}`);
+    // set a new item in the Collection
+    // with the key as the command name and the value as the exported module
+    client.commands.set(command.name, command);
 }
 
 soundFiles.forEach(i => {
@@ -70,8 +70,18 @@ client.on('message', async message => {
     const command = args.shift().toLowerCase();
 
     // this will remove the bot from a voice channel if it gets annoying.
-    if (command === "ping"){
+    if (command === "ping") {
         client.commands.get('ping').execute(message, args);
+    }
+    if (command === "whoson") {
+        message.guild.members.fetch().then(fetchedMembers => {
+            const totalOnline = fetchedMembers.filter(member => member.presence.status === 'online');
+            // We now have a collection with all online member objects in the totalOnline variable
+            message.channel.send(`There are currently ${totalOnline.size} members online in this guild!`);
+        });
+    }
+    if (command === "ip") {
+        client.commands.get('ip').execute(message);
     }
     if (command === "help") {
         client.commands.get('help').execute(message);
@@ -96,12 +106,12 @@ client.on('message', async message => {
     // Check to see if the command matches one of the sound files
     if (voiceCommands.includes(command)) {
         // If the user isn't in a voice channel
-        if (message.member.voice.channel == null){
+        if (message.member.voice.channel == null) {
             message.channel.send("Ayy, you arent in a channel. It's also a possibility that nathan fucked this bot up so bad this feature doesnt work anymore. Good luck... ☠️");
         } else {
             try {
                 const connection = await message.member.voice.channel.join();
-    
+
                 soundFiles.forEach(i => {
                     let soundFileCommand = i.replace('.mp3', '');
                     let soundFilePath = `./assets/${i}`;
@@ -115,7 +125,7 @@ client.on('message', async message => {
                 console.log(e);
             }
         }
-        
+
     }
 });
 
@@ -131,7 +141,7 @@ client.on('voiceStateUpdate', async(oldMember, newMember) => {
         const connection = await newMember.channel.join();
         const dispatcher = connection.play(file, { volume: globalBotVolume });
         playSound(file, connection, dispatcher);
-    } 
+    }
 
 });
 
