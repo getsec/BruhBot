@@ -1,12 +1,12 @@
 module.exports = {
-	name: 'help',
-	description: 'Shows the help menu!',
-	execute(message) {
+    name: 'help',
+    description: 'Shows the help menu!',
+    execute(message, version) {
         const exampleEmbed = {
             color: 0x0099ff,
-            title: 'BruhBot Help Menu',
+            title: `BruhBot Help Menu v${version}`,
             url: 'https://reddit.com/r/spacedicks',
-           
+
             description: 'this bot plays sounds and also plays cjams awesome yoooooo when you join a channel',
             fields: [
                 {
@@ -39,8 +39,8 @@ module.exports = {
                 text: 'Anyone like honey eggs?',
             },
         };
-        
+
         message.channel.send({ embed: exampleEmbed });
-	
-	},
+
+    },
 };

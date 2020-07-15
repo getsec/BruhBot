@@ -6,7 +6,7 @@ const fs = require('fs');
 const client = new Discord.Client();
 const prefix = process.env.PREFIX;
 const token = process.env.CLIENT_TOKEN;
-const version = '1.1';
+const version = '1.2';
 const globalBotVolume = 0.4;
 
 const voiceCommands = [];
@@ -51,13 +51,14 @@ const playSound = async (file, connection, dispatcher) => {
 client.on("ready", function () {
     let tag = client.user.tag;
     let id = client.user.id;
-    console.log(`${chalk.greenBright('We have launched succesfully')} with ID ${id}.`);
+    console.log(`${chalk.greenBright('We have launched succesfully')} with ID ${id}. `);
     console.log(`Logged in as: ${chalk.yellow(tag)}!`);
 
-    client.user.setActivity("your gf's heart 🤡");
+    client.user.setActivity("Simpzilla fucks dogs. 🐕");
     client.generateInvite(['SEND_MESSAGES', 'MANAGE_GUILD', 'MENTION_EVERYONE'])
         .then(link => {
             console.log(`Invite Link:  ${chalk.magentaBright(link)}`);
+            console.log(`Version num:  v${chalk.magentaBright(version)}`);
             let inviteLink = link;
         });
 });
@@ -85,7 +86,7 @@ client.on('message', async message => {
         client.commands.get('ip').execute(message);
     }
     else if (command === "help") {
-        client.commands.get('help').execute(message);
+        client.commands.get('help').execute(message, version);
     }
     else if (command === "kill") {
         let currentVoiceChannel = message.member.voice.channel;
