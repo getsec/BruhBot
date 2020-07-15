@@ -24,12 +24,13 @@ for (const file of commandFiles) {
     client.commands.set(command.name, command);
 }
 
+// Map commands to sound files for comands later
 soundFiles.forEach(i => {
     voiceCommands.push(i.replace('.mp3', ''));
 });
 
 
-const playSound = async(file, connection, dispatcher) => {
+const playSound = async (file, connection, dispatcher) => {
     // play
     dispatcher.on('start', () => {
         console.log(`${file} is now playing!`);
@@ -47,7 +48,7 @@ const playSound = async(file, connection, dispatcher) => {
 
 
 // When the application starts, this is required...
-client.on("ready", function() {
+client.on("ready", function () {
     let tag = client.user.tag;
     let id = client.user.id;
     console.log(`${chalk.greenBright('We have launched succesfully')} with ID ${id}.`);
@@ -73,38 +74,38 @@ client.on('message', async message => {
     if (command === "ping") {
         client.commands.get('ping').execute(message, args);
     }
-    if (command === "whoson") {
+    else if (command === "whoson") {
         message.guild.members.fetch().then(fetchedMembers => {
             const totalOnline = fetchedMembers.filter(member => member.presence.status === 'online');
             // We now have a collection with all online member objects in the totalOnline variable
             message.channel.send(`There are currently ${totalOnline.size} members online in this guild!`);
         });
     }
-    if (command === "ip") {
+    else if (command === "ip") {
         client.commands.get('ip').execute(message);
     }
-    if (command === "help") {
+    else if (command === "help") {
         client.commands.get('help').execute(message);
     }
-    if (command === "kill") {
+    else if (command === "kill") {
         let currentVoiceChannel = message.member.voice.channel;
         client.commands.get('kill').execute(currentVoiceChannel);
     }
-    if (command === "lofi") {
+    else if (command === "lofi") {
         let channelType = message.channel.type;
         let currentVoiceChannel = message.member.voice.channel;
         client.commands.get('lofi').execute(channelType, currentVoiceChannel, globalBotVolume);
     }
-    if (command == "mix") {
+    else if (command == "mix") {
         let channelType = message.channel.type;
         let currentVoiceChannel = message.member.voice.channel;
         client.commands.get('mix').execute(channelType, currentVoiceChannel, globalBotVolume);
     }
-    if (command === "sounds") {
+    else if (command === "sounds") {
         client.commands.get('sounds').execute(message, voiceCommands);
     }
     // Check to see if the command matches one of the sound files
-    if (voiceCommands.includes(command)) {
+    else if (voiceCommands.includes(command)) {
         // If the user isn't in a voice channel
         if (message.member.voice.channel == null) {
             message.channel.send("Ayy, you arent in a channel. It's also a possibility that nathan fucked this bot up so bad this feature doesnt work anymore. Good luck... ☠️");
@@ -126,11 +127,13 @@ client.on('message', async message => {
             }
         }
 
+    } else {
+        message.channel.send("That's not a command you fucking ape. 🙈");
     }
 });
 
 
-client.on('voiceStateUpdate', async(oldMember, newMember) => {
+client.on('voiceStateUpdate', async (oldMember, newMember) => {
     let newUserChannel = newMember.channelID;
     let oldUserChannel = oldMember.channelID;
     console.log(`channels (old|new):  ${oldUserChannel} | ${newUserChannel}`)
