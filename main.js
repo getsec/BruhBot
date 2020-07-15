@@ -70,16 +70,18 @@ client.on('message', async message => {
 
     const args = message.content.slice(prefix.length).split(/ +/);
     const command = args.shift().toLowerCase();
-
+    if (command === "kill") {
+        message.member.voice.channel.leave();
+    }
     // this will remove the bot from a voice channel if it gets annoying.
     if (command === "ping") {
         client.commands.get('ping').execute(message, args);
     }
-    else if (command === "whoson") {
+    else if (command === "homies") {
         message.guild.members.fetch().then(fetchedMembers => {
             const totalOnline = fetchedMembers.filter(member => member.presence.status === 'online');
             // We now have a collection with all online member objects in the totalOnline variable
-            message.channel.send(`There are currently ${totalOnline.size} members online in this guild!`);
+            message.channel.send(`There are currently ${totalOnline.size} homies!`);
         });
     }
     else if (command === "ip") {
@@ -87,10 +89,6 @@ client.on('message', async message => {
     }
     else if (command === "help") {
         client.commands.get('help').execute(message, version);
-    }
-    else if (command === "kill") {
-        let currentVoiceChannel = message.member.voice.channel;
-        client.commands.get('kill').execute(currentVoiceChannel);
     }
     else if (command === "lofi") {
         let channelType = message.channel.type;
