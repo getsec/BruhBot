@@ -6,7 +6,7 @@ const fs = require('fs');
 const client = new Discord.Client();
 const prefix = process.env.PREFIX;
 const token = process.env.CLIENT_TOKEN;
-const version = '1.2';
+const version = '1.3';
 const globalBotVolume = 0.4;
 
 const voiceCommands = [];
