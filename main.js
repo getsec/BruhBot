@@ -54,7 +54,7 @@ client.on("ready", function () {
     console.log(`${chalk.greenBright('We have launched succesfully')} with ID ${id}. `);
     console.log(`Logged in as: ${chalk.yellow(tag)}!`);
 
-    client.user.setActivity("with cams balls UwU");
+    client.user.setActivity(`with cams balls UwU [${version}]`);
     client.generateInvite(['SEND_MESSAGES', 'MANAGE_GUILD', 'MENTION_EVERYONE'])
         .then(link => {
             console.log(`Invite Link:  ${chalk.magentaBright(link)}`);
