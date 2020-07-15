@@ -116,8 +116,14 @@ client.on('message', async message => {
                     let soundFileCommand = i.replace('.mp3', '');
                     let soundFilePath = `./assets/${i}`;
                     if (command === soundFileCommand) {
-                        const dispatcher = connection.play(soundFilePath, { volume: globalBotVolume });
-                        playSound(soundFilePath, connection, dispatcher);
+                        if (soundFileCommand.includes('thomas')) {
+                            const dispatcher = connection.play(soundFilePath, { volume: 0.2 });
+                            playSound(soundFilePath, connection, dispatcher);
+                        } else {
+                            const dispatcher = connection.play(soundFilePath, { volume: globalBotVolume });
+                            playSound(soundFilePath, connection, dispatcher);
+                        }
+
                     }
                 });
             } catch (e) {
