@@ -54,7 +54,7 @@ client.on("ready", function () {
     console.log(`${chalk.greenBright('We have launched succesfully')} with ID ${id}. `);
     console.log(`Logged in as: ${chalk.yellow(tag)}!`);
 
-    client.user.setActivity("Simpzilla fucks dogs. 🐕");
+    client.user.setActivity("with cams balls UwU");
     client.generateInvite(['SEND_MESSAGES', 'MANAGE_GUILD', 'MENTION_EVERYONE'])
         .then(link => {
             console.log(`Invite Link:  ${chalk.magentaBright(link)}`);
@@ -126,8 +126,6 @@ client.on('message', async message => {
             }
         }
 
-    } else {
-        message.channel.send("That's not a command you fucking ape. 🙈");
     }
 });
 
