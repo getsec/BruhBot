@@ -10,7 +10,6 @@ const version = '1.3';
 const globalBotVolume = 0.4;
 
 const voiceCommands = [];
-const ytdl = require('ytdl-core');
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 const soundFiles = fs.readdirSync('./assets').filter(file => file.endsWith('.mp3'));
@@ -38,7 +37,6 @@ const playSound = async (file, connection, dispatcher) => {
 
     // when finished. Close 
     dispatcher.on('finish', () => {
-        console.log(`${file} has finished playing!`);
         connection.disconnect();
     });
 
@@ -72,6 +70,11 @@ client.on('message', async message => {
     const command = args.shift().toLowerCase();
     if (command === "kill") {
         message.member.voice.channel.leave();
+    }
+    if (command === "tts") {
+        message.channel.send(args, {
+            tts: true
+        })
     }
     // this will remove the bot from a voice channel if it gets annoying.
     if (command === "ping") {
@@ -139,7 +142,7 @@ client.on('message', async message => {
 client.on('voiceStateUpdate', async (oldMember, newMember) => {
     let newUserChannel = newMember.channelID;
     let oldUserChannel = oldMember.channelID;
-    console.log(`channels (old|new):  ${oldUserChannel} | ${newUserChannel}`)
+
 
     // If the oldChannel that the user was in is null, and the new channel exists. Execute sound.
     if (newUserChannel !== undefined && (oldUserChannel === undefined || oldUserChannel === null)) {
