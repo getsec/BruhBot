@@ -10,6 +10,10 @@ module.exports = {
             description: 'this bot plays sounds and also plays cjams awesome yoooooo when you join a channel',
             fields: [
                 {
+                    name: 'WE ADDED NEW INTRO SOUNDS!!!!',
+                    value: 'Join a voice call to here em!',
+                },
+                {
                     name: 'What do you do!',
                     value: 'Well, take a look...',
                 },

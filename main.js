@@ -6,14 +6,14 @@ const fs = require('fs');
 const client = new Discord.Client();
 const prefix = process.env.PREFIX;
 const token = process.env.CLIENT_TOKEN;
-const version = '1.3';
+const version = '1.5';
 const globalBotVolume = 0.4;
 
 const voiceCommands = [];
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 const soundFiles = fs.readdirSync('./assets').filter(file => file.endsWith('.mp3'));
-const welcomeMessages = fs.readFileSync('./welcome_messages').filter(file => file.endsWith('.mp3'));
+const welcomeMessages = fs.readdirSync('./onVoiceChannelMessages').filter(file => file.endsWith('.mp3'));
 client.commands = new Discord.Collection();
 
 // Create a list of commands from the commands directory
@@ -30,7 +30,7 @@ soundFiles.forEach(i => {
 });
 
 
-const playSound = async(file, connection, dispatcher) => {
+const playSound = async (file, connection, dispatcher) => {
     // play
     dispatcher.on('start', () => {
         console.log(`${file} is now playing!`);
@@ -47,7 +47,7 @@ const playSound = async(file, connection, dispatcher) => {
 
 
 // When the application starts, this is required...
-client.on("ready", function() {
+client.on("ready", function () {
     let tag = client.user.tag;
     let id = client.user.id;
     console.log(`${chalk.greenBright('We have launched succesfully')} with ID ${id}. `);
@@ -100,6 +100,12 @@ client.on('message', async message => {
         client.commands.get('mix').execute(channelType, currentVoiceChannel, globalBotVolume);
     } else if (command === "sounds") {
         client.commands.get('sounds').execute(message, voiceCommands);
+    } else if (command === "intro") {
+        const randomSound = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+        const connection = await message.member.voice.channel.join();
+        const dispatcher = connection.play(`./onVoiceChannelMessages/${randomSound}`);
+
+        playSound(randomSound, connection, dispatcher)
     }
     // Check to see if the command matches one of the sound files
     else if (voiceCommands.includes(command)) {
@@ -134,19 +140,21 @@ client.on('message', async message => {
 });
 
 
-client.on('voiceStateUpdate', async(oldMember, newMember) => {
+
+client.on('voiceStateUpdate', async (oldMember, newMember) => {
     let newUserChannel = newMember.channelID;
     let oldUserChannel = oldMember.channelID;
 
 
     // If the oldChannel that the user was in is null, and the new channel exists. Execute sound.
     if (newUserChannel !== undefined && (oldUserChannel === undefined || oldUserChannel === null)) {
-        var randomSound = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
-        var file = `assets/${randomSound}`;
-        console.log(file)
+        const randomSound = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
         const connection = await newMember.channel.join();
-        const dispatcher = connection.play(file, { volume: globalBotVolume });
-        playSound(file, connection, dispatcher);
+        const dispatcher = connection.play(`./onVoiceChannelMessages/${randomSound}`);
+
+        playSound(randomSound, connection, dispatcher)
+
+
     }
 
 });
