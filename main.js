@@ -13,6 +13,7 @@ const voiceCommands = [];
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 const soundFiles = fs.readdirSync('./assets').filter(file => file.endsWith('.mp3'));
+const welcomeMessages = fs.readFileSync('./welcome_messages').filter(file => file.endsWith('.mp3'));
 client.commands = new Discord.Collection();
 
 // Create a list of commands from the commands directory
@@ -29,7 +30,7 @@ soundFiles.forEach(i => {
 });
 
 
-const playSound = async (file, connection, dispatcher) => {
+const playSound = async(file, connection, dispatcher) => {
     // play
     dispatcher.on('start', () => {
         console.log(`${file} is now playing!`);
@@ -46,7 +47,7 @@ const playSound = async (file, connection, dispatcher) => {
 
 
 // When the application starts, this is required...
-client.on("ready", function () {
+client.on("ready", function() {
     let tag = client.user.tag;
     let id = client.user.id;
     console.log(`${chalk.greenBright('We have launched succesfully')} with ID ${id}. `);
@@ -79,31 +80,25 @@ client.on('message', async message => {
     // this will remove the bot from a voice channel if it gets annoying.
     if (command === "ping") {
         client.commands.get('ping').execute(message, args);
-    }
-    else if (command === "homies") {
+    } else if (command === "homies") {
         message.guild.members.fetch().then(fetchedMembers => {
             const totalOnline = fetchedMembers.filter(member => member.presence.status === 'online');
             // We now have a collection with all online member objects in the totalOnline variable
             message.channel.send(`There are currently ${totalOnline.size} homies!`);
         });
-    }
-    else if (command === "ip") {
+    } else if (command === "ip") {
         client.commands.get('ip').execute(message);
-    }
-    else if (command === "help") {
+    } else if (command === "help") {
         client.commands.get('help').execute(message, version);
-    }
-    else if (command === "lofi") {
+    } else if (command === "lofi") {
         let channelType = message.channel.type;
         let currentVoiceChannel = message.member.voice.channel;
         client.commands.get('lofi').execute(channelType, currentVoiceChannel, globalBotVolume);
-    }
-    else if (command == "mix") {
+    } else if (command == "mix") {
         let channelType = message.channel.type;
         let currentVoiceChannel = message.member.voice.channel;
         client.commands.get('mix').execute(channelType, currentVoiceChannel, globalBotVolume);
-    }
-    else if (command === "sounds") {
+    } else if (command === "sounds") {
         client.commands.get('sounds').execute(message, voiceCommands);
     }
     // Check to see if the command matches one of the sound files
@@ -139,14 +134,16 @@ client.on('message', async message => {
 });
 
 
-client.on('voiceStateUpdate', async (oldMember, newMember) => {
+client.on('voiceStateUpdate', async(oldMember, newMember) => {
     let newUserChannel = newMember.channelID;
     let oldUserChannel = oldMember.channelID;
 
 
     // If the oldChannel that the user was in is null, and the new channel exists. Execute sound.
     if (newUserChannel !== undefined && (oldUserChannel === undefined || oldUserChannel === null)) {
-        const file = 'assets/yo.mp3';
+        var randomSound = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+        var file = `assets/${randomSound}`;
+        console.log(file)
         const connection = await newMember.channel.join();
         const dispatcher = connection.play(file, { volume: globalBotVolume });
         playSound(file, connection, dispatcher);
