@@ -23,8 +23,8 @@ module.exports = {
             "Yes.",
             "Yes – definitely.",
             "You may rely on it."]
-            const randomElement = resps[Math.floor(Math.random() * array.length)];
-            let response = `**Your rocket league fate**: ${randomElement} \n:red_car:`
+            const randomElement = resps[Math.floor(Math.random() * resps.length)];
+            let response = `**Your rocket league fate**\n**Will you win these games**: ${randomElement} \n:red_car:`
 		message.channel.send(response);
 	},
 };

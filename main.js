@@ -72,6 +72,9 @@ client.on('message', async message => {
     if (command === "kill") {
         message.member.voice.channel.leave();
     }
+    if (command === 'conch') {
+        client.commands.get('conch').execute(message, args);
+    }
     if (command === "tts") {
         message.channel.send(args, {
             tts: true
