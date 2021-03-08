@@ -19,7 +19,9 @@
     "request": "^2.88.2",
     "requests": "^0.3.0",
     "say": "^0.16.0",
-    "ytdl-core": "^2.1.7"
+    "ytdl-core": "^2.1.7",
+    "@discordjs/opus": "^0.3.2",
+    "discord.js": "^12.2.0"
   },
   "devDependencies": {
     "@discordjs/opus": "^0.3.2",
